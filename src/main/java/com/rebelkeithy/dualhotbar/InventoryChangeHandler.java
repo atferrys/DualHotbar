@@ -39,7 +39,6 @@ public class InventoryChangeHandler {
             }
             mousePrev = Mouse.getDWheel();
 
-            //System.out.println("swap: " + swapkey.getKeyDescription());
             if (Keyboard.isKeyDown(swapkey.getKeyCode()) && Math.abs(mousePrev - Mouse.getDWheel()) > 0) {
                 if (!swapKeyDown) {
                     swapKeyDown = true;

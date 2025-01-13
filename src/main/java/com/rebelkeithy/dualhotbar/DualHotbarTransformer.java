@@ -39,13 +39,6 @@ public class DualHotbarTransformer implements IClassTransformer {
             System.out.println("********* INSIDE GuiIngameForge TRANSFORMER ABOUT TO PATCH: " + className);
             return patchShift(className, "renderToolHighlight", null, data);
         }
-		
-		/*if(newClassName.equals("invtweaks.InvTweaks"))
-		{
-			System.out.println("********* INSIDE InvTweaks TRANSFORMER ABOUT TO PATCH: " + className);
-
-			return patchBipush2(className, "handleAutoRefill", null, data);
-		}*/
 
         return data;
     }
@@ -157,23 +150,4 @@ public class DualHotbarTransformer implements IClassTransformer {
         return writer.toByteArray();
     }
 
-	/*private boolean containsMethod(String methodName, String methodDesc, byte[] data) 
-	{
-		ClassNode classNode = new ClassNode();
-		ClassReader classReader = new ClassReader(data);
-		classReader.accept(classNode, 0);
-		
-		Iterator<MethodNode> iter = classNode.methods.iterator();
-		while(iter.hasNext())
-		{
-			MethodNode methodNode = iter.next();
-			
-			if(methodNode.name.equals(methodName) && methodNode.desc.equals(methodDesc))
-			{
-				return true;
-			}
-		}
-		
-		return false;
-	}*/
 }

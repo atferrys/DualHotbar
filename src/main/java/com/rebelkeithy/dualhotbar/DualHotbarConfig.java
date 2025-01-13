@@ -4,7 +4,6 @@ import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
 
-
 public class DualHotbarConfig {
     public static Configuration config;
 
