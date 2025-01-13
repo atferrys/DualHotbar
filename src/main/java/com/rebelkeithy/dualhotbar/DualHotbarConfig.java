@@ -5,6 +5,7 @@ import net.minecraftforge.common.config.Configuration;
 import java.io.File;
 
 public class DualHotbarConfig {
+
     public static Configuration config;
 
     public static boolean enable;
@@ -17,12 +18,12 @@ public class DualHotbarConfig {
 
     public static void init(File file) {
         config = new Configuration(file);
-
         config.load();
         update();
     }
 
     public static void update() {
+
         config.renameProperty("Config", "Render Two Layers", "Long Hotbar");
         enable = config.getBoolean("Enable", "Config", true, "Enable DualHotbar");
         twoLayerRendering = config.getBoolean("Stacked Hotbar", "Config", true, "If disable for one long hotbar");
@@ -31,20 +32,17 @@ public class DualHotbarConfig {
         doubleTapTime = config.getInt("Double Tap Time", "Config", 900, 0, 2000, "Time (in milliseconds) for double tapping");
         numHotbars = config.getInt("Number of Hotbars", "Config", 2, 1, 4, "How many hotbar rows (9 slots each)");
 
-        if (numHotbars == 3) {
+        if(numHotbars == 3) {
             twoLayerRendering = true;
         }
 
-        if (numHotbars < 1 || numHotbars > 4) {
+        if(numHotbars < 1 || numHotbars > 4) {
             numHotbars = 1;
         }
 
-        if (enable) {
-            DualHotbarMod.hotbarSize = 18;
-        } else {
-            DualHotbarMod.hotbarSize = 9;
-        }
-
+        DualHotbarMod.hotbarSize = enable ? 18 : 9;
         config.save();
+
     }
+
 }

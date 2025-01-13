@@ -6,6 +6,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.input.Keyboard;
 
 public class ProxyClient extends ProxyCommon {
+
     @Override
     public void init() {
         RenderHandler renderHandler = new RenderHandler();
@@ -20,4 +21,5 @@ public class ProxyClient extends ProxyCommon {
         MinecraftForge.EVENT_BUS.register(renderHandler);
         MinecraftForge.EVENT_BUS.register(inventoryChangeHandler);
     }
+
 }

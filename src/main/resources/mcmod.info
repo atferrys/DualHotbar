@@ -1,20 +1,15 @@
 [
-{
-  "modid": "dualhotbar",
-  "name": "Dual Hotbar",
-  "description": "Double your hotbar space.",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": [
-    "RebelKeithy",
-    "ChrisLane",
-    "Ferrys"
-  ],
-  "credits": "RebelKeithy",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
-}
+  {
+    "modid": "dualhotbar",
+    "name": "Dual Hotbar",
+    "description": "Double your hotbar space.",
+    "version": "2.0.1",
+    "mcversion": "1.12.2",
+    "authorList": [
+      "RebelKeithy",
+      "ChrisLane",
+      "Ferrys"
+    ],
+    "credits": "RebelKeithy"
+  }
 ]

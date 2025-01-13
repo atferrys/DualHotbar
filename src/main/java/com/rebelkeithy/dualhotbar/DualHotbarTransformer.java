@@ -1,6 +1,7 @@
 package com.rebelkeithy.dualhotbar;
 
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -15,10 +16,10 @@ public class DualHotbarTransformer implements IClassTransformer {
         
         boolean isObfuscated = !(boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
 
-        if (newClassName.equals("net.minecraft.entity.player.InventoryPlayer")) {
+        if(newClassName.equals("net.minecraft.entity.player.InventoryPlayer")) {
             System.out.println("********* INSIDE InventoryPlayer TRANSFORMER ABOUT TO PATCH: " + className);
 
-            if (!isObfuscated) {
+            if(!isObfuscated) {
                 data = patchBipush(className, "isHotbar", "(I)Z", data);
                 data = patchBipush(className, "getHotbarSize", "()I", data);
                 data = patchBipush(className, "changeCurrentItem", "(I)V", data);
@@ -31,12 +32,12 @@ public class DualHotbarTransformer implements IClassTransformer {
             }
         }
 
-        if (className.equals("net.minecraftforge.common.ForgeHooks")) {
+        if(className.equals("net.minecraftforge.common.ForgeHooks")) {
             System.out.println("********* INSIDE ForgeHooks TRANSFORMER ABOUT TO PATCH: " + className);
             return patchBipush2(isObfuscated, className, "onPickBlock", null, data);
         }
 
-        if (className.equals("net.minecraftforge.client.GuiIngameForge")) {
+        if(className.equals("net.minecraftforge.client.GuiIngameForge")) {
             System.out.println("********* INSIDE GuiIngameForge TRANSFORMER ABOUT TO PATCH: " + className);
             return patchShift(className, "renderToolHighlight", null, data);
         }
@@ -49,15 +50,15 @@ public class DualHotbarTransformer implements IClassTransformer {
         ClassReader classReader = new ClassReader(data);
         classReader.accept(classNode, 0);
 
-        for (MethodNode methodNode : classNode.methods) {
-            if (methodNode.name.equals(methodName) && (methodDesc == null || methodNode.desc.equals(methodDesc))) {
+        for(MethodNode methodNode : classNode.methods) {
+            if(methodNode.name.equals(methodName) && (methodDesc == null || methodNode.desc.equals(methodDesc))) {
                 System.out.println("In " + methodName);
 
                 Iterator<AbstractInsnNode> insnIter = methodNode.instructions.iterator();
                 AbstractInsnNode insnNode = insnIter.next();
 
                 while (insnIter.hasNext()) {
-                    if (insnNode.getOpcode() == Opcodes.BIPUSH) {
+                    if(insnNode.getOpcode() == Opcodes.BIPUSH) {
                         System.out.println("found instruction to replace");
 
                         AbstractInsnNode newInstruction = new FieldInsnNode(Opcodes.GETSTATIC, "com/rebelkeithy/dualhotbar/DualHotbarMod", "hotbarSize", "I");
@@ -80,8 +81,8 @@ public class DualHotbarTransformer implements IClassTransformer {
         ClassReader classReader = new ClassReader(data);
         classReader.accept(classNode, 0);
 
-        for (MethodNode methodNode : classNode.methods) {
-            if (methodNode.name.equals(methodName) && (methodDesc == null || methodNode.desc.equals(methodDesc))) {
+        for(MethodNode methodNode : classNode.methods) {
+            if(methodNode.name.equals(methodName) && (methodDesc == null || methodNode.desc.equals(methodDesc))) {
                 System.out.println("In " + methodName);
 
                 Iterator<AbstractInsnNode> insnIter = methodNode.instructions.iterator();
@@ -91,11 +92,11 @@ public class DualHotbarTransformer implements IClassTransformer {
                 while (insnIter.hasNext()) {
                     AbstractInsnNode insnNode = insnIter.next();
 
-                    if (insnNode instanceof IntInsnNode) {
+                    if(insnNode instanceof IntInsnNode) {
                         System.out.println(((IntInsnNode) insnNode).operand);
                     }
 
-                    if (insnNode.getOpcode() == Opcodes.BIPUSH) {
+                    if(insnNode.getOpcode() == Opcodes.BIPUSH) {
                         System.out.println("found instruction to replace");
 
                         InsnList insnList = new InsnList();
@@ -124,8 +125,8 @@ public class DualHotbarTransformer implements IClassTransformer {
         ClassReader classReader = new ClassReader(data);
         classReader.accept(classNode, 0);
 
-        for (MethodNode methodNode : classNode.methods) {
-            if (methodNode.name.equals(methodName) && (methodNode.desc.equals(methodDesc) || methodDesc == null)) {
+        for(MethodNode methodNode : classNode.methods) {
+            if(methodNode.name.equals(methodName) && (methodNode.desc.equals(methodDesc) || methodDesc == null)) {
                 System.out.println("In " + methodName);
 
                 Iterator<AbstractInsnNode> insnIter = methodNode.instructions.iterator();
@@ -136,7 +137,7 @@ public class DualHotbarTransformer implements IClassTransformer {
                 AbstractInsnNode newInstruction = new MethodInsnNode(Opcodes.INVOKESTATIC, "com/rebelkeithy/dualhotbar/RenderHandler", "shiftUp", "()V", false);
                 methodNode.instructions.insertBefore(insnNode, newInstruction);
 
-                while (insnNode.getOpcode() != Opcodes.RETURN) {
+                while(insnNode.getOpcode() != Opcodes.RETURN) {
                     insnNode = insnIter.next();
                 }
 

@@ -16,8 +16,9 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.Map;
 
-@Mod(modid = DualHotbarMod.MODID, version = DualHotbarMod.VERSION, guiFactory = "com.rebelkeithy.dualhotbar.DualHotbarGuiFactory", acceptedMinecraftVersions = "[1.12.2,1.13)")
+@Mod(modid = DualHotbarMod.MODID, version = DualHotbarMod.VERSION, guiFactory = "com.rebelkeithy.dualhotbar.DualHotbarGuiFactory", acceptedMinecraftVersions = "[1.12.2]")
 public class DualHotbarMod {
+
     public static final String MODID = "dualhotbar";
     public static final String VERSION = "2.0.1";
 
@@ -28,21 +29,16 @@ public class DualHotbarMod {
     public static ProxyCommon proxy;
 
     public static boolean installedOnServer;
-    public static boolean isForgeServer = false;
 
     public static int hotbarSize = 9;
 
     public static int inventorySlotOffset(int slot) {
-        if (slot > 9)
-            return 0;
-
-        return 36;
+        return slot > 9 ? 0 : 36;
     }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         DualHotbarConfig.init(event.getSuggestedConfigurationFile());
-
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -55,10 +51,10 @@ public class DualHotbarMod {
     @SubscribeEvent
     public void onConnectedToServerEvent(ClientConnectedToServerEvent event) {
         if (!installedOnServer) {
-            System.out.println("DualHotbars not installed on server. Disabling selecting slots");
+            System.out.println("DualHotbar not installed on server. Disabling selecting slots");
             hotbarSize = 9;
         } else if (DualHotbarConfig.enable) {
-            System.out.println("DualHotbars installed on server. Enabling selecting slots");
+            System.out.println("DualHotbar installed on server. Enabling selecting slots");
             hotbarSize = 9 * DualHotbarConfig.numHotbars;
         }
     }
@@ -72,22 +68,15 @@ public class DualHotbarMod {
     // This is called before the ClientConnectedToServerEvent event, but this is only called on forge servers
     @NetworkCheckHandler
     public boolean checkRemote(Map<String, String> mods, Side remoteSide) {
-        System.out.println("checking remote");
-
-        for (String s : mods.keySet()) {
-            System.out.println(s + " " + mods.get(s));
-            if (s.equals(MODID)) {
-                installedOnServer = true;
-                break;
-            }
-        }
+        installedOnServer = mods.keySet().stream().anyMatch(MODID::equals);
         return true;
     }
 
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (event.getModID().equals(MODID)) {
+        if(event.getModID().equals(MODID)) {
             DualHotbarConfig.update();
         }
     }
+
 }

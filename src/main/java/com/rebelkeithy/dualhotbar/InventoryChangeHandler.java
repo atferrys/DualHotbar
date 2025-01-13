@@ -11,8 +11,10 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 public class InventoryChangeHandler {
+
     public static KeyBinding swapkey;
     public static KeyBinding selectKey;
+
     public int mousePrev = -1;
     public int slot = -1;
     public int selectedItem;
@@ -26,109 +28,138 @@ public class InventoryChangeHandler {
 
     @SubscribeEvent
     public void postTickEvent(TickEvent.ClientTickEvent event) {
+
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        if (Minecraft.getMinecraft().player == null)
+
+        if(Minecraft.getMinecraft().player == null) {
             return;
+        }
 
-        if (event.phase == TickEvent.Phase.START) {
+        if(event.phase == TickEvent.Phase.START) {
+
             for (int j = 0; j < 9; ++j) {
-
-                if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindsHotbar[j].getKeyCode())) {
+                if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindsHotbar[j].getKeyCode())) {
                     selectedItem = player.inventory.currentItem;
                 }
             }
+
             mousePrev = Mouse.getDWheel();
 
-            if (Keyboard.isKeyDown(swapkey.getKeyCode()) && Math.abs(mousePrev - Mouse.getDWheel()) > 0) {
-                if (!swapKeyDown) {
+            if(Keyboard.isKeyDown(swapkey.getKeyCode()) && Math.abs(mousePrev - Mouse.getDWheel()) > 0) {
+
+                if(!swapKeyDown) {
+
                     swapKeyDown = true;
-                    Minecraft mc = Minecraft.getMinecraft();
-                    PlayerControllerMP controller = mc.playerController;
 
                     int window = player.inventoryContainer.windowId;
+                    Minecraft mc = Minecraft.getMinecraft();
 
+                    PlayerControllerMP controller = mc.playerController;
                     controller.updateController();
 
-                    if (mousePrev < 0) {
+                    if(mousePrev < 0) {
+
                         RenderHandler.switchTicks = -12;
-                        if (DualHotbarConfig.twoLayerRendering) {
-                            for (int i = 0; i < 9; i++) {
+
+                        if(DualHotbarConfig.twoLayerRendering) {
+                            for(int i = 0; i < 9; i++) {
+
                                 controller.windowClick(window, i + 36, 0, ClickType.PICKUP, player);
-                                if (DualHotbarConfig.numHotbars > 3)
+
+                                if(DualHotbarConfig.numHotbars > 3) {
                                     controller.windowClick(window, i + 27, 0, ClickType.PICKUP, player);
-                                if (DualHotbarConfig.numHotbars > 2)
+                                }
+
+                                if(DualHotbarConfig.numHotbars > 2) {
                                     controller.windowClick(window, i + 18, 0, ClickType.PICKUP, player);
-                                if (DualHotbarConfig.numHotbars > 1)
+                                }
+
+                                if(DualHotbarConfig.numHotbars > 1) {
                                     controller.windowClick(window, i + 9, 0, ClickType.PICKUP, player);
+                                }
+
                                 controller.windowClick(window, i + 36, 0, ClickType.PICKUP, player);
+
                             }
                         }
+
                     } else {
+
                         RenderHandler.switchTicks = 12;
-                        if (DualHotbarConfig.twoLayerRendering) {
-                            for (int i = 0; i < 9; i++) {
+
+                        if(DualHotbarConfig.twoLayerRendering) {
+                            for(int i = 0; i < 9; i++) {
+
                                 controller.windowClick(window, i + 36, 0, ClickType.PICKUP, player);
-                                if (DualHotbarConfig.numHotbars > 1)
+
+                                if(DualHotbarConfig.numHotbars > 1) {
                                     controller.windowClick(window, i + 9, 0, ClickType.PICKUP, player);
-                                if (DualHotbarConfig.numHotbars > 2)
+                                }
+
+                                if(DualHotbarConfig.numHotbars > 2) {
                                     controller.windowClick(window, i + 18, 0, ClickType.PICKUP, player);
-                                if (DualHotbarConfig.numHotbars > 3)
+                                }
+
+                                if(DualHotbarConfig.numHotbars > 3) {
                                     controller.windowClick(window, i + 27, 0, ClickType.PICKUP, player);
+                                }
+
                                 controller.windowClick(window, i + 36, 0, ClickType.PICKUP, player);
+
                             }
                         }
+
                     }
 
-                    if (DualHotbarConfig.numHotbars == 4) {
-                        for (int i = 9; i < 27; i++) {
+                    if(DualHotbarConfig.numHotbars == 4) {
+                        for(int i = 9; i < 27; i++) {
                             controller.windowClick(window, i, 0, ClickType.PICKUP, player);
                             controller.windowClick(window, i + 18, 0, ClickType.PICKUP, player);
                             controller.windowClick(window, i, 0, ClickType.PICKUP, player);
                         }
                     }
 
-                    /*for (int i = 18; i < 27; i++) {
-                        controller.windowClick(window, i, 0, 0, player);
-                        controller.windowClick(window, i + 9, 0, 0, player);
-                        controller.windowClick(window, i, 0, 0, player);
-                    }*/
-
                     slot = player.inventory.currentItem;
+
                 }
+
             } else {
                 swapKeyDown = false;
             }
         }
 
-        if (event.phase == TickEvent.Phase.END) {
+        if(event.phase == TickEvent.Phase.END) {
+
             // If using ctrl-scroll to swap hotbars, put the players selected slot back to what it was before the scroll
             if (slot != -1) {
                 player.inventory.currentItem = slot;
                 slot = -1;
             }
 
-            if (!DualHotbarConfig.enable || !DualHotbarMod.installedOnServer) {
+            if(!DualHotbarConfig.enable || !DualHotbarMod.installedOnServer) {
                 return;
             }
 
             Minecraft mc = Minecraft.getMinecraft();
             long time = System.currentTimeMillis();
-            for (int j = 0; j < 9; ++j) {
 
-                if (Keyboard.isKeyDown(mc.gameSettings.keyBindsHotbar[j].getKeyCode())) {
+            for(int j = 0; j < 9; ++j) {
+
+                if(Keyboard.isKeyDown(mc.gameSettings.keyBindsHotbar[j].getKeyCode())) {
+
                     // If using the modifier + inv key combo, we can set the inventory slot without any more checking
-                    if (Keyboard.isKeyDown(selectKey.getKeyCode())) {
+                    if(Keyboard.isKeyDown(selectKey.getKeyCode())) {
                         player.inventory.currentItem = j + 9;
                         continue;
                     }
 
                     // Only let this code run when the key is first press, not while it is being held
-                    if (keyWasDown[j]) {
+                    if(keyWasDown[j]) {
                         continue;
                     }
 
-                    for (int i = 0; i < DualHotbarConfig.numHotbars; i++) {
-                        if (selectedItem == j + i * 9) {
+                    for(int i = 0; i < DualHotbarConfig.numHotbars; i++) {
+                        if(selectedItem == j + i * 9) {
                             player.inventory.currentItem = (j + 9 * (i + 1)) % (DualHotbarConfig.numHotbars * 9);
                         }
                     }
@@ -137,19 +168,8 @@ public class InventoryChangeHandler {
                     // then increment clickCount. Otherwise reset clickCount back to 0
                     if (lastKey == j && DualHotbarConfig.doubleTap && time - keyTimes[j] < 900) {
                         clickCount++;
-
-                        //if (clickCount > 1)
-                        //    clickCount = 0;
                     } else {
                         clickCount = 0;
-                    }
-
-                    // If clickCount = 1 then there was a double click, since 0 was the first click
-                    if (clickCount > 0) {
-                        //player.inventory.currentItem = j + 9;
-
-                        //player.inventory.currentItem = (j + 9 * (clickCount)) % (DualHotbarConfig.numHotbars * 9);
-
                     }
 
                     lastKey = j;
