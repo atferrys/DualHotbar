@@ -59,7 +59,7 @@ public class RenderHandler {
             int width = res.getScaledWidth();
             int height = res.getScaledHeight();
 
-            mc.profiler.startSection("actionBar");
+            mc.mcProfiler.startSection("actionBar");
 
             int offset = 20;
 
@@ -80,7 +80,7 @@ public class RenderHandler {
             EntityPlayer player = mc.player;
             ItemStack itemstack = player.getHeldItemOffhand();
             EnumHandSide enumhandside = player.getPrimaryHand().opposite();
-            if (itemstack.isEmpty()) {
+            if (!itemstack.isEmpty()) {
                 if (enumhandside == EnumHandSide.LEFT) {
                     mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 29, res.getScaledHeight() - 23, 24, 22, 29, 24);
                 } else {
@@ -133,7 +133,7 @@ public class RenderHandler {
                     GL11.glTranslatef(0, -21, 0);
             }
 
-            if (itemstack.isEmpty()) {
+            if (!itemstack.isEmpty()) {
                 int l1 = res.getScaledHeight() - 16 - 3;
 
                 if (enumhandside == EnumHandSide.LEFT) {
@@ -207,7 +207,7 @@ public class RenderHandler {
 
             RenderHelper.disableStandardItemLighting();
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-            mc.profiler.endSection();
+            mc.mcProfiler.endSection();
 
             if (RenderHandler.switchTicks > 0)
                 RenderHandler.switchTicks--;
