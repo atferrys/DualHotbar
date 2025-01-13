@@ -59,216 +59,223 @@ public class RenderHandler {
             return;
         }
 
-        if(event.getType() == ElementType.HOTBAR) {
+        if(event.getType() != ElementType.HOTBAR) {
+            return;
+        }
 
-            Minecraft mc = Minecraft.getMinecraft();
-            float partialTicks = event.getPartialTicks();
-            ScaledResolution res = event.getResolution();
+        Minecraft mc = Minecraft.getMinecraft();
 
-            int width = res.getScaledWidth();
-            int height = res.getScaledHeight();
+        if(mc.player.isSpectator()) {
+            return;
+        }
 
-            mc.mcProfiler.startSection("actionBar");
+        float partialTicks = event.getPartialTicks();
+        ScaledResolution res = event.getResolution();
 
-            int offset = 20;
+        int width = res.getScaledWidth();
+        int height = res.getScaledHeight();
 
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            mc.renderEngine.bindTexture(WIDGETS);
+        mc.mcProfiler.startSection("actionBar");
 
-            GL11.glPushMatrix();
+        int offset = 20;
 
-            if(!DualHotbarConfig.twoLayerRendering) {
-                if(DualHotbarConfig.numHotbars == 4) {
-                    GL11.glTranslatef(0, -41, 0);
-                } else {
-                    GL11.glTranslatef(0, -21, 0);
-                }
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        mc.renderEngine.bindTexture(WIDGETS);
+
+        GL11.glPushMatrix();
+
+        if(!DualHotbarConfig.twoLayerRendering) {
+            if(DualHotbarConfig.numHotbars == 4) {
+                GL11.glTranslatef(0, -41, 0);
+            } else {
+                GL11.glTranslatef(0, -21, 0);
+            }
+        }
+
+        // Draw the offhand slot
+        EntityPlayer player = mc.player;
+        ItemStack itemstack = player.getHeldItemOffhand();
+        EnumHandSide enumhandside = player.getPrimaryHand().opposite();
+
+        if(!itemstack.isEmpty()) {
+            if(enumhandside == EnumHandSide.LEFT) {
+                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 29, res.getScaledHeight() - 23, 24, 22, 29, 24);
+            } else {
+                mc.ingameGUI.drawTexturedModalRect(width / 2 + 91, res.getScaledHeight() - 23, 53, 22, 29, 24);
+            }
+        }
+
+        GL11.glPopMatrix();
+
+        // Draw the hotbar slots
+        InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
+
+        if(DualHotbarConfig.twoLayerRendering) {
+
+            mc.ingameGUI.drawTexturedModalRect(width / 2 - 91, height - 22, 0, 0, 182, 22);
+
+            if(!DualHotbarMod.installedOnServer) {
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
             }
 
-            // Draw the offhand slot
-            EntityPlayer player = mc.player;
-            ItemStack itemstack = player.getHeldItemOffhand();
-            EnumHandSide enumhandside = player.getPrimaryHand().opposite();
 
-            if(!itemstack.isEmpty()) {
-                if(enumhandside == EnumHandSide.LEFT) {
-                    mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 29, res.getScaledHeight() - 23, 24, 22, 29, 24);
-                } else {
-                    mc.ingameGUI.drawTexturedModalRect(width / 2 + 91, res.getScaledHeight() - 23, 53, 22, 29, 24);
-                }
+            for(int i = 1; i < DualHotbarConfig.numHotbars; i++) {
+                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91, height - 22 * i - offset + (i - 1) * 2, 0, 0, 182, 21);
             }
 
-            GL11.glPopMatrix();
+            if(!DualHotbarMod.installedOnServer) {
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
+            }
 
-            // Draw the hotbar slots
-            InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
+            // Draw selection square
+            mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 1 + (inv.currentItem % 9) * 20, height - 22 - 1 - ((inv.currentItem / 9) * offset), 0, 22, 24, 22);
+            mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 1 + (inv.currentItem % 9) * 20, height - 1 - ((inv.currentItem / 9) * offset), 0, 22, 24, 1);
+
+        } else {
+
+            mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 90, height - 22, 0, 0, 182, 22);
+            mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 + 91, height - 22, 1, 0, 181, 22);
+            mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 + 91 - 1, height - 22, 20, 0, 3, 22);
+
+            if(DualHotbarConfig.numHotbars == 4) {
+                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 90, height - 22 - offset, 0, 0, 182, 21);
+                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 + 91, height - 22 - offset, 1, 0, 181, 21);
+                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 + 91 - 1, height - 22 - offset, 20, 0, 3, 21);
+            }
+
+            mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 1 + (inv.currentItem % 18) * 20 - 90, height - 22 - 1 - ((inv.currentItem / 18) * offset), 0, 22, 24, 22);
+            mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 1 + (inv.currentItem % 18) * 20 - 90, height - 1 - ((inv.currentItem / 18) * offset), 0, 22, 24, 1);
+
+        }
+
+        GlStateManager.enableRescaleNormal();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        RenderHelper.enableGUIStandardItemLighting();
+
+        GL11.glPushMatrix();
+
+        if(!DualHotbarConfig.twoLayerRendering) {
+            if(DualHotbarConfig.numHotbars == 4) {
+                GL11.glTranslatef(0, -41, 0);
+            } else {
+                GL11.glTranslatef(0, -21, 0);
+            }
+        }
+
+        if(!itemstack.isEmpty()) {
+
+            int l1 = res.getScaledHeight() - 16 - 3;
+
+            if(enumhandside == EnumHandSide.LEFT) {
+                this.renderHotbarItem(width / 2 - 91 - 26, l1, partialTicks, player, itemstack);
+            } else {
+                this.renderHotbarItem(width / 2 + 91 + 10, l1, partialTicks, player, itemstack);
+            }
+
+        }
+
+        GL11.glPopMatrix();
+
+        // Draw the hotbar items
+        for (int i = 0; i < 9 * DualHotbarConfig.numHotbars; ++i) {
 
             if(DualHotbarConfig.twoLayerRendering) {
 
-                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91, height - 22, 0, 0, 182, 22);
+                int x = width / 2 - 90 + (i % 9) * 20 + 2;
+                int z = height - 16 - 3 - ((i / 9) * offset);
 
                 if(!DualHotbarMod.installedOnServer) {
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
                 }
 
+                GL11.glPushMatrix();
 
-                for(int i = 1; i < DualHotbarConfig.numHotbars; i++) {
-                    mc.ingameGUI.drawTexturedModalRect(width / 2 - 91, height - 22 * i - offset + (i - 1) * 2, 0, 0, 182, 21);
+                if(RenderHandler.switchTicks != 0) {
+
+                    float animationOffset = RenderHandler.switchTicks * 2;
+
+                    if(RenderHandler.switchTicks < 0) {
+                        animationOffset += 2;
+                    }
+
+                    if(RenderHandler.switchTicks > 0)  {
+                        animationOffset -= 2;
+                    }
+
+                    if(RenderHandler.switchTicks < -6 && i / 9 == DualHotbarConfig.numHotbars - 1) {
+                        animationOffset += 20 * DualHotbarConfig.numHotbars;
+                    }
+
+                    if(RenderHandler.switchTicks > 6 && i / 9 == 0) {
+                        animationOffset -= 20 * DualHotbarConfig.numHotbars;
+                    }
+
+                    GL11.glTranslatef(0, animationOffset, 0);
+
                 }
+
+                renderHotbarItem(x, z, partialTicks, player, player.inventory.getStackInSlot(i));
+                GL11.glPopMatrix();
 
                 if(!DualHotbarMod.installedOnServer) {
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
                 }
 
-                // Draw selection square
-                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 1 + (inv.currentItem % 9) * 20, height - 22 - 1 - ((inv.currentItem / 9) * offset), 0, 22, 24, 22);
-                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 1 + (inv.currentItem % 9) * 20, height - 1 - ((inv.currentItem / 9) * offset), 0, 22, 24, 1);
-
             } else {
 
-                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 90, height - 22, 0, 0, 182, 22);
-                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 + 91, height - 22, 1, 0, 181, 22);
-                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 + 91 - 1, height - 22, 20, 0, 3, 22);
+                int x = width / 2 - 90 + (i % 18) * 20 + 2 - 90;
+                int z = height - 16 - 3 - ((i / 18) * offset);
 
-                if(DualHotbarConfig.numHotbars == 4) {
-                    mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 90, height - 22 - offset, 0, 0, 182, 21);
-                    mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 + 91, height - 22 - offset, 1, 0, 181, 21);
-                    mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 + 91 - 1, height - 22 - offset, 20, 0, 3, 21);
-                }
+                GL11.glPushMatrix();
 
-                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 1 + (inv.currentItem % 18) * 20 - 90, height - 22 - 1 - ((inv.currentItem / 18) * offset), 0, 22, 24, 22);
-                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 1 + (inv.currentItem % 18) * 20 - 90, height - 1 - ((inv.currentItem / 18) * offset), 0, 22, 24, 1);
+                if(RenderHandler.switchTicks != 0) {
 
-            }
+                    float animationOffset = RenderHandler.switchTicks * 2;
 
-            GlStateManager.enableRescaleNormal();
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            RenderHelper.enableGUIStandardItemLighting();
-
-            GL11.glPushMatrix();
-
-            if(!DualHotbarConfig.twoLayerRendering) {
-                if(DualHotbarConfig.numHotbars == 4) {
-                    GL11.glTranslatef(0, -41, 0);
-                } else {
-                    GL11.glTranslatef(0, -21, 0);
-                }
-            }
-
-            if(!itemstack.isEmpty()) {
-
-                int l1 = res.getScaledHeight() - 16 - 3;
-
-                if(enumhandside == EnumHandSide.LEFT) {
-                    this.renderHotbarItem(width / 2 - 91 - 26, l1, partialTicks, player, itemstack);
-                } else {
-                    this.renderHotbarItem(width / 2 + 91 + 10, l1, partialTicks, player, itemstack);
-                }
-
-            }
-
-            GL11.glPopMatrix();
-
-            // Draw the hotbar items
-            for (int i = 0; i < 9 * DualHotbarConfig.numHotbars; ++i) {
-
-                if(DualHotbarConfig.twoLayerRendering) {
-
-                    int x = width / 2 - 90 + (i % 9) * 20 + 2;
-                    int z = height - 16 - 3 - ((i / 9) * offset);
-
-                    if(!DualHotbarMod.installedOnServer) {
-                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
+                    if(RenderHandler.switchTicks < 0) {
+                        animationOffset += 2;
                     }
 
-                    GL11.glPushMatrix();
-
-                    if(RenderHandler.switchTicks != 0) {
-
-                        float animationOffset = RenderHandler.switchTicks * 2;
-
-                        if(RenderHandler.switchTicks < 0) {
-                            animationOffset += 2;
-                        }
-
-                        if(RenderHandler.switchTicks > 0)  {
-                            animationOffset -= 2;
-                        }
-
-                        if(RenderHandler.switchTicks < -6 && i / 9 == DualHotbarConfig.numHotbars - 1) {
-                            animationOffset += 20 * DualHotbarConfig.numHotbars;
-                        }
-
-                        if(RenderHandler.switchTicks > 6 && i / 9 == 0) {
-                            animationOffset -= 20 * DualHotbarConfig.numHotbars;
-                        }
-
-                        GL11.glTranslatef(0, animationOffset, 0);
-
+                    if(RenderHandler.switchTicks > 0) {
+                        animationOffset -= 2;
                     }
 
-                    renderHotbarItem(x, z, partialTicks, player, player.inventory.getStackInSlot(i));
-                    GL11.glPopMatrix();
-
-                    if(!DualHotbarMod.installedOnServer) {
-                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
+                    if(RenderHandler.switchTicks < -6 && (i / 9 == 2 || i / 9 == 3)) {
+                        animationOffset += 20 * DualHotbarConfig.numHotbars / 2f;
                     }
 
-                } else {
-
-                    int x = width / 2 - 90 + (i % 18) * 20 + 2 - 90;
-                    int z = height - 16 - 3 - ((i / 18) * offset);
-
-                    GL11.glPushMatrix();
-
-                    if(RenderHandler.switchTicks != 0) {
-
-                        float animationOffset = RenderHandler.switchTicks * 2;
-
-                        if(RenderHandler.switchTicks < 0) {
-                            animationOffset += 2;
-                        }
-
-                        if(RenderHandler.switchTicks > 0) {
-                            animationOffset -= 2;
-                        }
-
-                        if(RenderHandler.switchTicks < -6 && (i / 9 == 2 || i / 9 == 3)) {
-                            animationOffset += 20 * DualHotbarConfig.numHotbars / 2f;
-                        }
-
-                        if(RenderHandler.switchTicks > 6 && (i / 9 == 0 || i / 9 == 1)) {
-                            animationOffset -= 20 * DualHotbarConfig.numHotbars / 2f;
-                        }
-
-                        GL11.glTranslatef(0, animationOffset, 0);
-
+                    if(RenderHandler.switchTicks > 6 && (i / 9 == 0 || i / 9 == 1)) {
+                        animationOffset -= 20 * DualHotbarConfig.numHotbars / 2f;
                     }
 
-                    renderHotbarItem(x, z, partialTicks, player, player.inventory.getStackInSlot(i));
-                    GL11.glPopMatrix();
+                    GL11.glTranslatef(0, animationOffset, 0);
 
                 }
+
+                renderHotbarItem(x, z, partialTicks, player, player.inventory.getStackInSlot(i));
+                GL11.glPopMatrix();
+
             }
-
-            RenderHelper.disableStandardItemLighting();
-            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-            mc.mcProfiler.endSection();
-
-            if(RenderHandler.switchTicks > 0) {
-                RenderHandler.switchTicks--;
-            }
-
-            if(RenderHandler.switchTicks < 0) {
-                RenderHandler.switchTicks++;
-            }
-
-            // Stop minecraft from drawing the hotbar itself
-            event.setCanceled(true);
         }
+
+        RenderHelper.disableStandardItemLighting();
+        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        mc.mcProfiler.endSection();
+
+        if(RenderHandler.switchTicks > 0) {
+            RenderHandler.switchTicks--;
+        }
+
+        if(RenderHandler.switchTicks < 0) {
+            RenderHandler.switchTicks++;
+        }
+
+        // Stop minecraft from drawing the hotbar itself
+        event.setCanceled(true);
+
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
