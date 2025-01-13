@@ -12,7 +12,8 @@ public class DualHotbarTransformer implements IClassTransformer {
 
     @Override
     public byte[] transform(String className, String newClassName, byte[] data) {
-        boolean isObfuscated = !className.equals(newClassName);
+        
+        boolean isObfuscated = !(boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
 
         if (newClassName.equals("net.minecraft.entity.player.InventoryPlayer")) {
             System.out.println("********* INSIDE InventoryPlayer TRANSFORMER ABOUT TO PATCH: " + className);
@@ -32,7 +33,7 @@ public class DualHotbarTransformer implements IClassTransformer {
 
         if (className.equals("net.minecraftforge.common.ForgeHooks")) {
             System.out.println("********* INSIDE ForgeHooks TRANSFORMER ABOUT TO PATCH: " + className);
-            return patchBipush2(className, "onPickBlock", null, data);
+            return patchBipush2(isObfuscated, className, "onPickBlock", null, data);
         }
 
         if (className.equals("net.minecraftforge.client.GuiIngameForge")) {
@@ -74,7 +75,7 @@ public class DualHotbarTransformer implements IClassTransformer {
         return writer.toByteArray();
     }
 
-    private byte[] patchBipush2(String className, String methodName, String methodDesc, byte[] data) {
+    private byte[] patchBipush2(boolean isObfuscated, String className, String methodName, String methodDesc, byte[] data) {
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(data);
         classReader.accept(classNode, 0);
@@ -100,8 +101,8 @@ public class DualHotbarTransformer implements IClassTransformer {
                         InsnList insnList = new InsnList();
 
                         insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-                        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/player/EntityPlayer", "inventory", "Lnet/minecraft/entity/player/InventoryPlayer;"));
-                        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/player/InventoryPlayer", "currentItem", "I"));
+                        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/player/EntityPlayer", isObfuscated ? "field_71071_by" : "inventory", "Lnet/minecraft/entity/player/InventoryPlayer;"));
+                        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/player/InventoryPlayer", isObfuscated ? "field_70461_c" : "currentItem", "I"));
                         insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/rebelkeithy/dualhotbar/DualHotbarMod", "inventorySlotOffset", "(I)I", false));
 
                         methodNode.instructions.insert(insnNode, insnList);
