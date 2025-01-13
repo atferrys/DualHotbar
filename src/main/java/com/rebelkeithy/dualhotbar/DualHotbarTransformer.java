@@ -19,17 +19,10 @@ public class DualHotbarTransformer implements IClassTransformer {
         if(newClassName.equals("net.minecraft.entity.player.InventoryPlayer")) {
             System.out.println("********* INSIDE InventoryPlayer TRANSFORMER ABOUT TO PATCH: " + className);
 
-            if(!isObfuscated) {
-                data = patchBipush(className, "isHotbar", "(I)Z", data);
-                data = patchBipush(className, "getHotbarSize", "()I", data);
-                data = patchBipush(className, "changeCurrentItem", "(I)V", data);
-                return patchBipush(className, "getBestHotbarSlot", "()I", data);
-            } else {
-                data = patchBipush(className, "func_184435_e", "(I)Z", data);
-                data = patchBipush(className, "func_70451_h", "()I", data);
-                data = patchBipush(className, "func_70453_c", "(I)V", data);
-                return patchBipush(className, "func_184433_k", "()I", data);
-            }
+            data = patchBipush(className, isObfuscated ? "func_184435_e" : "isHotbar", "(I)Z", data);
+            data = patchBipush(className, isObfuscated ? "func_70451_h" : "getHotbarSize", "()I", data);
+            data = patchBipush(className, isObfuscated ? "func_70453_c" : "changeCurrentItem", "(I)V", data);
+            return patchBipush(className, isObfuscated ? "func_184433_k" : "getBestHotbarSlot", "()I", data);
         }
 
         if(className.equals("net.minecraftforge.common.ForgeHooks")) {
@@ -43,6 +36,7 @@ public class DualHotbarTransformer implements IClassTransformer {
         }
 
         return data;
+
     }
 
     private byte[] patchBipush(String className, String methodName, String methodDesc, byte[] data) {
