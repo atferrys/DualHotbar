@@ -57,30 +57,20 @@ public class RenderHandler {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(WIDGETS);
 
-        GL11.glPushMatrix();
-
-        if(!DualHotbarConfig.stackedHotbar) {
-            if(DualHotbarConfig.hotbarsNumber == 4) {
-                GL11.glTranslatef(0, -41, 0);
-            } else {
-                GL11.glTranslatef(0, -21, 0);
-            }
-        }
+        EntityPlayer player = mc.player;
 
         // Draw the offhand slot
-        EntityPlayer player = mc.player;
-        ItemStack itemstack = player.getHeldItemOffhand();
-        EnumHandSide enumhandside = player.getPrimaryHand().opposite();
+        ItemStack offhandItemstack = player.getHeldItemOffhand();
+        EnumHandSide handSide = player.getPrimaryHand().opposite();
+        int offhandXOffset = 91 * (DualHotbarConfig.stackedHotbar ? 1 : DualHotbarConfig.hotbarsNumber);
 
-        if(!itemstack.isEmpty()) {
-            if(enumhandside == EnumHandSide.LEFT) {
-                mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 29, res.getScaledHeight() - 23, 24, 22, 29, 24);
+        if(!offhandItemstack.isEmpty()) {
+            if(handSide == EnumHandSide.LEFT) {
+                mc.ingameGUI.drawTexturedModalRect(width / 2 - offhandXOffset - 29, res.getScaledHeight() - 23, 24, 22, 29, 24);
             } else {
-                mc.ingameGUI.drawTexturedModalRect(width / 2 + 91, res.getScaledHeight() - 23, 53, 22, 29, 24);
+                mc.ingameGUI.drawTexturedModalRect(width / 2 + offhandXOffset, res.getScaledHeight() - 23, 53, 22, 29, 24);
             }
         }
-
-        GL11.glPopMatrix();
 
         // Draw the hotbar slots
         InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
@@ -128,29 +118,14 @@ public class RenderHandler {
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         RenderHelper.enableGUIStandardItemLighting();
 
-        GL11.glPushMatrix();
-
-        if(!DualHotbarConfig.stackedHotbar) {
-            if(DualHotbarConfig.hotbarsNumber == 4) {
-                GL11.glTranslatef(0, -41, 0);
+        // Draw the offhand item
+        if(!offhandItemstack.isEmpty()) {
+            if(handSide == EnumHandSide.LEFT) {
+                this.renderHotbarItem(width / 2 - offhandXOffset - 26, res.getScaledHeight() - 19, partialTicks, player, offhandItemstack);
             } else {
-                GL11.glTranslatef(0, -21, 0);
+                this.renderHotbarItem(width / 2 + offhandXOffset + 10, res.getScaledHeight() - 19, partialTicks, player, offhandItemstack);
             }
         }
-
-        if(!itemstack.isEmpty()) {
-
-            int l1 = res.getScaledHeight() - 16 - 3;
-
-            if(enumhandside == EnumHandSide.LEFT) {
-                this.renderHotbarItem(width / 2 - 91 - 26, l1, partialTicks, player, itemstack);
-            } else {
-                this.renderHotbarItem(width / 2 + 91 + 10, l1, partialTicks, player, itemstack);
-            }
-
-        }
-
-        GL11.glPopMatrix();
 
         // Draw the hotbar items
         for (int i = 0; i < 9 * DualHotbarConfig.hotbarsNumber; ++i) {
