@@ -1,6 +1,5 @@
 package com.rebelkeithy.dualhotbar;
 
-import com.rebelkeithy.dualhotbar.config.DualHotbarConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
@@ -11,12 +10,13 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import static com.rebelkeithy.dualhotbar.config.DualHotbarConfig.*;
+
 public class InventoryChangeHandler {
 
     public static KeyBinding swapkey;
     public static KeyBinding selectKey;
 
-    public int mousePrev = -1;
     public int slot = -1;
     public int selectedItem;
     public boolean swapKeyDown;
@@ -25,162 +25,142 @@ public class InventoryChangeHandler {
     public int clickCount = 0;
 
     public boolean[] keyWasDown = new boolean[9];
-    public boolean[] changeInv = new boolean[9];
 
     @SubscribeEvent
     public void postTickEvent(TickEvent.ClientTickEvent event) {
 
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if(!enable || !DualHotbarMod.installedOnServer) {
+            return;
+        }
 
-        if(Minecraft.getMinecraft().player == null) {
+        Minecraft mc = Minecraft.getMinecraft();
+        EntityPlayerSP player = mc.player;
+
+        if(player == null) {
             return;
         }
 
         if(event.phase == TickEvent.Phase.START) {
-
-            for (int j = 0; j < 9; ++j) {
-                if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindsHotbar[j].getKeyCode())) {
-                    selectedItem = player.inventory.currentItem;
-                }
-            }
-
-            mousePrev = Mouse.getDWheel();
-
-            if(Keyboard.isKeyDown(swapkey.getKeyCode()) && Math.abs(mousePrev - Mouse.getDWheel()) > 0) {
-
-                if(!swapKeyDown) {
-
-                    swapKeyDown = true;
-
-                    int window = player.inventoryContainer.windowId;
-                    Minecraft mc = Minecraft.getMinecraft();
-
-                    PlayerControllerMP controller = mc.playerController;
-                    controller.updateController();
-
-                    if(mousePrev < 0) {
-
-                        RenderHandler.switchTicks = -12;
-
-                        if(DualHotbarConfig.stackedHotbar) {
-                            for(int i = 0; i < 9; i++) {
-
-                                controller.windowClick(window, i + 36, 0, ClickType.PICKUP, player);
-
-                                if(DualHotbarConfig.hotbarsNumber > 3) {
-                                    controller.windowClick(window, i + 27, 0, ClickType.PICKUP, player);
-                                }
-
-                                if(DualHotbarConfig.hotbarsNumber > 2) {
-                                    controller.windowClick(window, i + 18, 0, ClickType.PICKUP, player);
-                                }
-
-                                if(DualHotbarConfig.hotbarsNumber > 1) {
-                                    controller.windowClick(window, i + 9, 0, ClickType.PICKUP, player);
-                                }
-
-                                controller.windowClick(window, i + 36, 0, ClickType.PICKUP, player);
-
-                            }
-                        }
-
-                    } else {
-
-                        RenderHandler.switchTicks = 12;
-
-                        if(DualHotbarConfig.stackedHotbar) {
-                            for(int i = 0; i < 9; i++) {
-
-                                controller.windowClick(window, i + 36, 0, ClickType.PICKUP, player);
-
-                                if(DualHotbarConfig.hotbarsNumber > 1) {
-                                    controller.windowClick(window, i + 9, 0, ClickType.PICKUP, player);
-                                }
-
-                                if(DualHotbarConfig.hotbarsNumber > 2) {
-                                    controller.windowClick(window, i + 18, 0, ClickType.PICKUP, player);
-                                }
-
-                                if(DualHotbarConfig.hotbarsNumber > 3) {
-                                    controller.windowClick(window, i + 27, 0, ClickType.PICKUP, player);
-                                }
-
-                                controller.windowClick(window, i + 36, 0, ClickType.PICKUP, player);
-
-                            }
-                        }
-
-                    }
-
-                    if(DualHotbarConfig.hotbarsNumber == 4) {
-                        for(int i = 9; i < 27; i++) {
-                            controller.windowClick(window, i, 0, ClickType.PICKUP, player);
-                            controller.windowClick(window, i + 18, 0, ClickType.PICKUP, player);
-                            controller.windowClick(window, i, 0, ClickType.PICKUP, player);
-                        }
-                    }
-
-                    slot = player.inventory.currentItem;
-
-                }
-
-            } else {
-                swapKeyDown = false;
-            }
+            handleStart(mc, player);
         }
 
         if(event.phase == TickEvent.Phase.END) {
+            handleEnd(mc, player);
+        }
 
-            // If using ctrl-scroll to swap hotbars, put the players selected slot back to what it was before the scroll
-            if (slot != -1) {
-                player.inventory.currentItem = slot;
-                slot = -1;
-            }
+    }
 
-            if(!DualHotbarConfig.enable || !DualHotbarMod.installedOnServer) {
-                return;
-            }
+    private void handleStart(Minecraft mc, EntityPlayerSP player) {
 
-            Minecraft mc = Minecraft.getMinecraft();
-            long time = System.currentTimeMillis();
-
-            for(int j = 0; j < 9; ++j) {
-
-                if(Keyboard.isKeyDown(mc.gameSettings.keyBindsHotbar[j].getKeyCode())) {
-
-                    // If using the modifier + inv key combo, we can set the inventory slot without any more checking
-                    if(Keyboard.isKeyDown(selectKey.getKeyCode())) {
-                        player.inventory.currentItem = j + 9;
-                        continue;
-                    }
-
-                    // Only let this code run when the key is first press, not while it is being held
-                    if(keyWasDown[j]) {
-                        continue;
-                    }
-
-                    for(int i = 0; i < DualHotbarConfig.hotbarsNumber; i++) {
-                        if(selectedItem == j + i * 9) {
-                            player.inventory.currentItem = (j + 9 * (i + 1)) % (DualHotbarConfig.hotbarsNumber * 9);
-                        }
-                    }
-
-                    // If this key is the same as the last key pressed, and the time difference was less than 900ms, and double tapping is enabled
-                    // then increment clickCount. Otherwise reset clickCount back to 0
-                    if (lastKey == j && DualHotbarConfig.enableDoubleTap && time - keyTimes[j] < DualHotbarConfig.doubleTapTime) {
-                        clickCount++;
-                    } else {
-                        clickCount = 0;
-                    }
-
-                    lastKey = j;
-                    keyTimes[j] = time;
-                    keyWasDown[j] = true;
-
-                } else {
-                    keyWasDown[j] = false;
-                }
+        for(int j = 0; j < 9; ++j) {
+            if(Keyboard.isKeyDown(mc.gameSettings.keyBindsHotbar[j].getKeyCode())) {
+                selectedItem = player.inventory.currentItem;
             }
         }
+
+        // Do not allow cycling when hotbars are next to each other
+        if(!stackedHotbar) {
+            return;
+        }
+
+        int scrollWheel = Mouse.getDWheel();
+
+        if(!Keyboard.isKeyDown(swapkey.getKeyCode()) || scrollWheel == 0) {
+            swapKeyDown = false;
+            return;
+        }
+
+        if(swapKeyDown) {
+            return;
+        }
+
+        swapKeyDown = true;
+
+        int window = player.inventoryContainer.windowId;
+
+        PlayerControllerMP controller = mc.playerController;
+        controller.updateController();
+
+        RenderHandler.switchTicks = scrollWheel > 0 ? 12 : -12;
+
+        for(int i = 0; i < 9; i++) {
+
+            controller.windowClick(window, i + 36, 0, ClickType.PICKUP, player);
+
+            if(scrollWheel > 0) {
+                for(int j = hotbarsNumber - 1; j >= 1; j--) {
+                    controller.windowClick(window, i + 9 * j, 0, ClickType.PICKUP, player);
+                }
+            } else {
+                for(int j = 1; j < hotbarsNumber; j++) {
+                    controller.windowClick(window, i + 9 * j, 0, ClickType.PICKUP, player);
+                }
+            }
+
+            controller.windowClick(window, i + 36, 0, ClickType.PICKUP, player);
+
+        }
+
+        if(hotbarsNumber == 4) {
+            for(int i = 9; i < 27; i++) {
+                controller.windowClick(window, i, 0, ClickType.PICKUP, player);
+                controller.windowClick(window, i + 18, 0, ClickType.PICKUP, player);
+                controller.windowClick(window, i, 0, ClickType.PICKUP, player);
+            }
+        }
+
+        slot = player.inventory.currentItem;
+
     }
+
+    private void handleEnd(Minecraft mc, EntityPlayerSP player) {
+
+        // If using ctrl-scroll to swap hotbars, put the players selected slot back to what it was before the scroll
+        if(slot != -1) {
+            player.inventory.currentItem = slot;
+            slot = -1;
+        }
+
+        long time = System.currentTimeMillis();
+
+        for(int j = 0; j < 9; ++j) {
+
+            if(!Keyboard.isKeyDown(mc.gameSettings.keyBindsHotbar[j].getKeyCode())) {
+                keyWasDown[j] = false;
+                continue;
+            }
+
+            // If using the modifier + inv key combo, we can set the inventory slot without any more checking
+            if(Keyboard.isKeyDown(selectKey.getKeyCode())) {
+                player.inventory.currentItem = j + 9;
+                continue;
+            }
+
+            // Only let this code run when the key is first press, not while it is being held
+            if(keyWasDown[j]) {
+                continue;
+            }
+
+            for(int i = 0; i < hotbarsNumber; i++) {
+                if(selectedItem == j + i * 9) {
+                    player.inventory.currentItem = (j + 9 * (i + 1)) % (hotbarsNumber * 9);
+                }
+            }
+
+            // If this key is the same as the last key pressed, and the time difference was less than 900ms, and double tapping is enabled
+            // then increment clickCount. Otherwise reset clickCount back to 0
+            if(lastKey == j && enableDoubleTap && time - keyTimes[j] < doubleTapTime) {
+                clickCount++;
+            } else {
+                clickCount = 0;
+            }
+
+            lastKey = j;
+            keyTimes[j] = time;
+            keyWasDown[j] = true;
+
+        }
+
+    }
+
 }
