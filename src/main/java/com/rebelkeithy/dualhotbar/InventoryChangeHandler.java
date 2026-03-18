@@ -3,7 +3,6 @@ package com.rebelkeithy.dualhotbar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.inventory.ClickType;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -11,11 +10,10 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import static com.rebelkeithy.dualhotbar.config.DualHotbarConfig.*;
+import static com.rebelkeithy.dualhotbar.proxy.ClientProxy.SELECT_KEYBIND;
+import static com.rebelkeithy.dualhotbar.proxy.ClientProxy.SWAP_KEYBIND;
 
 public class InventoryChangeHandler {
-
-    public static KeyBinding swapkey;
-    public static KeyBinding selectKey;
 
     public int slot = -1;
     public int selectedItem;
@@ -65,7 +63,7 @@ public class InventoryChangeHandler {
 
         int scrollWheel = Mouse.getDWheel();
 
-        if(!Keyboard.isKeyDown(swapkey.getKeyCode()) || scrollWheel == 0) {
+        if(!Keyboard.isKeyDown(SWAP_KEYBIND.getKeyCode()) || scrollWheel == 0) {
             swapKeyDown = false;
             return;
         }
@@ -131,7 +129,7 @@ public class InventoryChangeHandler {
             }
 
             // If using the modifier + inv key combo, we can set the inventory slot without any more checking
-            if(Keyboard.isKeyDown(selectKey.getKeyCode())) {
+            if(Keyboard.isKeyDown(SELECT_KEYBIND.getKeyCode())) {
                 player.inventory.currentItem = j + 9;
                 continue;
             }
