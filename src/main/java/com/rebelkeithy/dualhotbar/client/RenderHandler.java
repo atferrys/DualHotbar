@@ -29,7 +29,7 @@ public class RenderHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void renderHotbar(RenderGameOverlayEvent.Pre event) {
 
-        if(!DualHotbarConfig.enable) {
+        if(!DualHotbarConfig.enabled) {
             return;
         }
 
@@ -230,7 +230,7 @@ public class RenderHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void shiftRendererUp(RenderGameOverlayEvent.Pre event) {
 
-        if(!DualHotbarConfig.enable || (!DualHotbarConfig.stackedHotbar && DualHotbarConfig.hotbarsNumber != 4)) {
+        if(!DualHotbarConfig.enabled || (!DualHotbarConfig.stackedHotbar && DualHotbarConfig.hotbarsNumber != 4)) {
             return;
         }
 
@@ -256,7 +256,7 @@ public class RenderHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void shiftRendererDown(RenderGameOverlayEvent.Post event) {
 
-        if(!DualHotbarConfig.enable || (!DualHotbarConfig.stackedHotbar && DualHotbarConfig.hotbarsNumber != 4)) {
+        if(!DualHotbarConfig.enabled || (!DualHotbarConfig.stackedHotbar && DualHotbarConfig.hotbarsNumber != 4)) {
             return;
         }
 
@@ -270,7 +270,7 @@ public class RenderHandler {
     // Copied from GuiIngame.renderHotbarItem
     protected void renderHotbarItem(int x, int y, float partialTicks, EntityPlayer player, ItemStack stack) {
 
-        if(!DualHotbarConfig.enable) {
+        if(!DualHotbarConfig.enabled) {
             return;
         }
 

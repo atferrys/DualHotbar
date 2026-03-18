@@ -28,7 +28,7 @@ public class InventoryChangeHandler {
     @SubscribeEvent
     public void postTickEvent(TickEvent.ClientTickEvent event) {
 
-        if(!enable || !DualHotbar.installedOnServer) {
+        if(!enabled || !DualHotbar.installedOnServer) {
             return;
         }
 

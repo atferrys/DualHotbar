@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class DualHotbarConfig {
 
     @Config.Name("DualHotbar enabled")
-    public static boolean enable = true;
+    public static boolean enabled = true;
 
     @Config.Name("Stacked Hotbar")
     @Config.Comment({
@@ -41,7 +41,7 @@ public class DualHotbarConfig {
         }
 
         if(hotbarsNumber <= 1) {
-            enable = false;
+            enabled = false;
         }
 
     }

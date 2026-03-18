@@ -14,7 +14,7 @@ public class GuiIngameForgeMixin {
     @Inject(method = "renderToolHighlight", at = @At("HEAD"), remap = false)
     private void dualhotbar$shiftUp(CallbackInfo ci) {
 
-        if(!DualHotbarConfig.enable || !DualHotbarConfig.stackedHotbar) {
+        if(!DualHotbarConfig.enabled || !DualHotbarConfig.stackedHotbar) {
             return;
         }
 
@@ -26,7 +26,7 @@ public class GuiIngameForgeMixin {
     @Inject(method = "renderToolHighlight", at = @At("RETURN"), remap = false)
     private void dualhotbar$shiftDown(CallbackInfo ci) {
 
-        if(!DualHotbarConfig.enable || !DualHotbarConfig.stackedHotbar) {
+        if(!DualHotbarConfig.enabled || !DualHotbarConfig.stackedHotbar) {
             return;
         }
 
