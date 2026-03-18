@@ -1,7 +1,7 @@
 package com.rebelkeithy.dualhotbar.proxy;
 
-import com.rebelkeithy.dualhotbar.InventoryChangeHandler;
-import com.rebelkeithy.dualhotbar.RenderHandler;
+import com.rebelkeithy.dualhotbar.client.InventoryChangeHandler;
+import com.rebelkeithy.dualhotbar.client.RenderHandler;
 import com.rebelkeithy.dualhotbar.Tags;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;

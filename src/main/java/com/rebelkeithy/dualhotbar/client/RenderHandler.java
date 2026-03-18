@@ -1,5 +1,6 @@
-package com.rebelkeithy.dualhotbar;
+package com.rebelkeithy.dualhotbar.client;
 
+import com.rebelkeithy.dualhotbar.DualHotbar;
 import com.rebelkeithy.dualhotbar.config.DualHotbarConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
