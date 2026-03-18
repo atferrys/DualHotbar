@@ -6,11 +6,11 @@
 	"minVersion": "0.8.5",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
-		"InventoryPlayerMixin",
-		"ForgeHooksMixin"
+		"InventoryPlayerMixin"
 	],
 	"server": [],
 	"client": [
+		"ForgeHooksMixin",
 		"GuiIngameForgeMixin"
 	]
 }
