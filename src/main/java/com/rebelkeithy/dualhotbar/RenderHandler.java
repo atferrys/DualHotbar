@@ -75,7 +75,7 @@ public class RenderHandler {
         int width = res.getScaledWidth();
         int height = res.getScaledHeight();
 
-        mc.mcProfiler.startSection("actionBar");
+        mc.profiler.startSection("actionBar");
 
         int offset = 20;
 
@@ -263,7 +263,7 @@ public class RenderHandler {
 
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-        mc.mcProfiler.endSection();
+        mc.profiler.endSection();
 
         if(RenderHandler.switchTicks > 0) {
             RenderHandler.switchTicks--;

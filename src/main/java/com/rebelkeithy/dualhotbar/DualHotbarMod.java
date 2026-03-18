@@ -16,13 +16,10 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.Map;
 
-@Mod(modid = DualHotbarMod.MODID, version = DualHotbarMod.VERSION, guiFactory = "com.rebelkeithy.dualhotbar.DualHotbarGuiFactory", acceptedMinecraftVersions = "[1.12.2]")
+@Mod(modid = Tags.MOD_ID, name = Tags.MOD_NAME, version = Tags.VERSION, guiFactory = "com.rebelkeithy.dualhotbar.DualHotbarGuiFactory")
 public class DualHotbarMod {
 
-    public static final String MODID = "dualhotbar";
-    public static final String VERSION = "2.0.1";
-
-    @Instance(MODID)
+    @Instance(Tags.MOD_ID)
     public static DualHotbarMod instance;
 
     @SidedProxy(clientSide = "com.rebelkeithy.dualhotbar.ProxyClient", serverSide = "com.rebelkeithy.dualhotbar.ProxyCommon")
@@ -68,13 +65,13 @@ public class DualHotbarMod {
     // This is called before the ClientConnectedToServerEvent event, but this is only called on forge servers
     @NetworkCheckHandler
     public boolean checkRemote(Map<String, String> mods, Side remoteSide) {
-        installedOnServer = mods.keySet().stream().anyMatch(MODID::equals);
+        installedOnServer = mods.keySet().stream().anyMatch(Tags.MOD_ID::equals);
         return true;
     }
 
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if(event.getModID().equals(MODID)) {
+        if(event.getModID().equals(Tags.MOD_ID)) {
             DualHotbarConfig.update();
         }
     }
