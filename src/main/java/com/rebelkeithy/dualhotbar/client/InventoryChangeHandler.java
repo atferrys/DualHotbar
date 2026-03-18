@@ -1,6 +1,5 @@
 package com.rebelkeithy.dualhotbar.client;
 
-import com.rebelkeithy.dualhotbar.DualHotbar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
@@ -28,7 +27,7 @@ public class InventoryChangeHandler {
     @SubscribeEvent
     public void postTickEvent(TickEvent.ClientTickEvent event) {
 
-        if(!enabled || !DualHotbar.installedOnServer) {
+        if(!enabled) {
             return;
         }
 

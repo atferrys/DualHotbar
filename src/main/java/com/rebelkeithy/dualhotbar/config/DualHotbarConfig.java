@@ -46,6 +46,43 @@ public class DualHotbarConfig {
 
     }
 
+    @Config.Ignore
+    private static boolean isServerOverridden = false;
+
+    @Config.Ignore
+    private static boolean clientEnabled;
+
+    @Config.Ignore
+    private static int clientHotbarNumbers;
+
+    public static void serverOverride(boolean serverEnabled, int serverHotbarsNumber) {
+
+        if(!isServerOverridden) {
+            clientEnabled = enabled;
+            clientHotbarNumbers = hotbarsNumber;
+            isServerOverridden = true;
+        }
+
+        enabled = serverEnabled;
+        hotbarsNumber = serverHotbarsNumber;
+        validate();
+
+    }
+
+    public static void resetServerOverride() {
+
+        if(!isServerOverridden) {
+            return;
+        }
+
+        isServerOverridden = false;
+
+        enabled = clientEnabled;
+        hotbarsNumber = clientHotbarNumbers;
+        validate();
+
+    }
+
     @Mod.EventBusSubscriber(modid = Tags.MOD_ID)
     private static class EventHandler {
 

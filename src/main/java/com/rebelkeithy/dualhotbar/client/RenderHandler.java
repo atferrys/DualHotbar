@@ -1,6 +1,5 @@
 package com.rebelkeithy.dualhotbar.client;
 
-import com.rebelkeithy.dualhotbar.DualHotbar;
 import com.rebelkeithy.dualhotbar.config.DualHotbarConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -80,17 +79,8 @@ public class RenderHandler {
 
             mc.ingameGUI.drawTexturedModalRect(width / 2 - 91, height - 22, 0, 0, 182, 22);
 
-            if(!DualHotbar.installedOnServer) {
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
-            }
-
-
             for(int i = 1; i < DualHotbarConfig.hotbarsNumber; i++) {
                 mc.ingameGUI.drawTexturedModalRect(width / 2 - 91, height - 22 * i - offset + (i - 1) * 2, 0, 0, 182, 21);
-            }
-
-            if(!DualHotbar.installedOnServer) {
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
             }
 
             // Draw selection square
@@ -136,10 +126,6 @@ public class RenderHandler {
                 int x = width / 2 - 90 + (i % 9) * 20 + 2;
                 int z = height - 16 - 3 - ((i / 9) * offset);
 
-                if(!DualHotbar.installedOnServer) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
-                }
-
                 GL11.glPushMatrix();
 
                 if(RenderHandler.switchTicks != 0) {
@@ -168,10 +154,6 @@ public class RenderHandler {
 
                 renderHotbarItem(x, z, partialTicks, player, player.inventory.getStackInSlot(i));
                 GL11.glPopMatrix();
-
-                if(!DualHotbar.installedOnServer) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
-                }
 
             } else {
 
