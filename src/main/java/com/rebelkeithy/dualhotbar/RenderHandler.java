@@ -79,7 +79,7 @@ public class RenderHandler {
 
             mc.ingameGUI.drawTexturedModalRect(width / 2 - 91, height - 22, 0, 0, 182, 22);
 
-            if(!DualHotbarMod.installedOnServer) {
+            if(!DualHotbar.installedOnServer) {
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
             }
 
@@ -88,7 +88,7 @@ public class RenderHandler {
                 mc.ingameGUI.drawTexturedModalRect(width / 2 - 91, height - 22 * i - offset + (i - 1) * 2, 0, 0, 182, 21);
             }
 
-            if(!DualHotbarMod.installedOnServer) {
+            if(!DualHotbar.installedOnServer) {
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
             }
 
@@ -135,7 +135,7 @@ public class RenderHandler {
                 int x = width / 2 - 90 + (i % 9) * 20 + 2;
                 int z = height - 16 - 3 - ((i / 9) * offset);
 
-                if(!DualHotbarMod.installedOnServer) {
+                if(!DualHotbar.installedOnServer) {
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
                 }
 
@@ -168,7 +168,7 @@ public class RenderHandler {
                 renderHotbarItem(x, z, partialTicks, player, player.inventory.getStackInSlot(i));
                 GL11.glPopMatrix();
 
-                if(!DualHotbarMod.installedOnServer) {
+                if(!DualHotbar.installedOnServer) {
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
                 }
 

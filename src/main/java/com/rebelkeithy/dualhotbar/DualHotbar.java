@@ -17,7 +17,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import java.util.Map;
 
 @Mod(modid = Tags.MOD_ID, name = Tags.MOD_NAME, version = Tags.VERSION)
-public class DualHotbarMod {
+public class DualHotbar {
 
     @SidedProxy(clientSide = "com.rebelkeithy.dualhotbar.proxy.ClientProxy", serverSide = "com.rebelkeithy.dualhotbar.proxy.ServerProxy")
     public static CommonProxy proxy;

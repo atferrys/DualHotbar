@@ -1,6 +1,6 @@
 package com.rebelkeithy.dualhotbar.mixin;
 
-import com.rebelkeithy.dualhotbar.DualHotbarMod;
+import com.rebelkeithy.dualhotbar.DualHotbar;
 import net.minecraft.entity.player.InventoryPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -19,7 +19,7 @@ public class InventoryPlayerMixin {
             constant = @Constant(intValue = 9)
     )
     private static int dualhotbar$replaceHotbarSize(int original) {
-        return DualHotbarMod.hotbarSize;
+        return DualHotbar.hotbarSize;
     }
 
 }
