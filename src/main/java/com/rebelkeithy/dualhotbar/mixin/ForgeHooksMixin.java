@@ -1,5 +1,6 @@
 package com.rebelkeithy.dualhotbar.mixin;
 
+import com.rebelkeithy.dualhotbar.config.DualHotbarConfig;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks;
@@ -18,9 +19,16 @@ public class ForgeHooksMixin {
             )
     )
     private static void dualHotbar$sendSlotPacket(PlayerControllerMP player, ItemStack stack, int slot) {
+
+        if(!DualHotbarConfig.enabled) {
+            player.sendSlotPacket(stack, slot);
+            return;
+        }
+
         int rawSlot = slot - 36;
         int newSlot = rawSlot >= 9 ? rawSlot : slot;
         player.sendSlotPacket(stack, newSlot);
+
     }
 
 }
