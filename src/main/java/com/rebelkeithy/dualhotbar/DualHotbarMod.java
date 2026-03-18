@@ -29,10 +29,6 @@ public class DualHotbarMod {
 
     public static int hotbarSize = 9;
 
-    public static int inventorySlotOffset(int slot) {
-        return slot > 9 ? 0 : 36;
-    }
-
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         DualHotbarConfig.init(event.getSuggestedConfigurationFile());

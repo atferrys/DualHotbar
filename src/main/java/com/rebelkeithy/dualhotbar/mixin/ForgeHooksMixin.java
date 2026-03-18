@@ -1,9 +1,8 @@
 package com.rebelkeithy.dualhotbar.mixin;
 
-import com.rebelkeithy.dualhotbar.DualHotbarMod;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.client.multiplayer.PlayerControllerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -14,13 +13,14 @@ public class ForgeHooksMixin {
     @Redirect(
             method = "onPickBlock",
             at = @At(
-                    value = "FIELD",
-                    target = "Lnet/minecraft/entity/player/InventoryPlayer;currentItem:I",
-                    opcode = Opcodes.GETFIELD
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/multiplayer/PlayerControllerMP;sendSlotPacket(Lnet/minecraft/item/ItemStack;I)V"
             )
     )
-    private static int dualhotbar$redirectCurrentItem(InventoryPlayer inventory) {
-        return DualHotbarMod.inventorySlotOffset(inventory.currentItem);
+    private static void dualHotbar$sendSlotPacket(PlayerControllerMP player, ItemStack stack, int slot) {
+        int rawSlot = slot - 36;
+        int newSlot = rawSlot >= 9 ? rawSlot : slot;
+        player.sendSlotPacket(stack, newSlot);
     }
 
 }
