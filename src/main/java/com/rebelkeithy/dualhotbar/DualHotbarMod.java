@@ -1,10 +1,10 @@
 package com.rebelkeithy.dualhotbar;
 
 import com.rebelkeithy.dualhotbar.config.DualHotbarConfig;
+import com.rebelkeithy.dualhotbar.proxy.CommonProxy;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -19,11 +19,8 @@ import java.util.Map;
 @Mod(modid = Tags.MOD_ID, name = Tags.MOD_NAME, version = Tags.VERSION)
 public class DualHotbarMod {
 
-    @Instance(Tags.MOD_ID)
-    public static DualHotbarMod instance;
-
-    @SidedProxy(clientSide = "com.rebelkeithy.dualhotbar.ProxyClient", serverSide = "com.rebelkeithy.dualhotbar.ProxyCommon")
-    public static ProxyCommon proxy;
+    @SidedProxy(clientSide = "com.rebelkeithy.dualhotbar.proxy.ClientProxy", serverSide = "com.rebelkeithy.dualhotbar.proxy.ServerProxy")
+    public static CommonProxy proxy;
 
     public static boolean installedOnServer;
 
@@ -36,7 +33,7 @@ public class DualHotbarMod {
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        proxy.init();
+        proxy.init(event);
     }
 
     // By this point checkRemote would have been called, so we can set the hotbar size to the correct values depending on if the server has this mod

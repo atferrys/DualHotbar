@@ -1,14 +1,23 @@
-package com.rebelkeithy.dualhotbar;
+package com.rebelkeithy.dualhotbar.proxy;
 
+import com.rebelkeithy.dualhotbar.InventoryChangeHandler;
+import com.rebelkeithy.dualhotbar.RenderHandler;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.input.Keyboard;
 
-public class ProxyClient extends ProxyCommon {
+@Mod.EventBusSubscriber(Side.CLIENT)
+public class ClientProxy extends CommonProxy {
 
     @Override
-    public void init() {
+    public void init(FMLInitializationEvent e) {
+
+        super.init(e);
+
         RenderHandler renderHandler = new RenderHandler();
         InventoryChangeHandler inventoryChangeHandler = new InventoryChangeHandler();
 
@@ -20,6 +29,7 @@ public class ProxyClient extends ProxyCommon {
 
         MinecraftForge.EVENT_BUS.register(renderHandler);
         MinecraftForge.EVENT_BUS.register(inventoryChangeHandler);
+
     }
 
 }
