@@ -1,5 +1,6 @@
 package com.rebelkeithy.dualhotbar;
 
+import com.rebelkeithy.dualhotbar.config.DualHotbarConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
@@ -61,20 +62,20 @@ public class InventoryChangeHandler {
 
                         RenderHandler.switchTicks = -12;
 
-                        if(DualHotbarConfig.twoLayerRendering) {
+                        if(DualHotbarConfig.stackedHotbar) {
                             for(int i = 0; i < 9; i++) {
 
                                 controller.windowClick(window, i + 36, 0, ClickType.PICKUP, player);
 
-                                if(DualHotbarConfig.numHotbars > 3) {
+                                if(DualHotbarConfig.hotbarsNumber > 3) {
                                     controller.windowClick(window, i + 27, 0, ClickType.PICKUP, player);
                                 }
 
-                                if(DualHotbarConfig.numHotbars > 2) {
+                                if(DualHotbarConfig.hotbarsNumber > 2) {
                                     controller.windowClick(window, i + 18, 0, ClickType.PICKUP, player);
                                 }
 
-                                if(DualHotbarConfig.numHotbars > 1) {
+                                if(DualHotbarConfig.hotbarsNumber > 1) {
                                     controller.windowClick(window, i + 9, 0, ClickType.PICKUP, player);
                                 }
 
@@ -87,20 +88,20 @@ public class InventoryChangeHandler {
 
                         RenderHandler.switchTicks = 12;
 
-                        if(DualHotbarConfig.twoLayerRendering) {
+                        if(DualHotbarConfig.stackedHotbar) {
                             for(int i = 0; i < 9; i++) {
 
                                 controller.windowClick(window, i + 36, 0, ClickType.PICKUP, player);
 
-                                if(DualHotbarConfig.numHotbars > 1) {
+                                if(DualHotbarConfig.hotbarsNumber > 1) {
                                     controller.windowClick(window, i + 9, 0, ClickType.PICKUP, player);
                                 }
 
-                                if(DualHotbarConfig.numHotbars > 2) {
+                                if(DualHotbarConfig.hotbarsNumber > 2) {
                                     controller.windowClick(window, i + 18, 0, ClickType.PICKUP, player);
                                 }
 
-                                if(DualHotbarConfig.numHotbars > 3) {
+                                if(DualHotbarConfig.hotbarsNumber > 3) {
                                     controller.windowClick(window, i + 27, 0, ClickType.PICKUP, player);
                                 }
 
@@ -111,7 +112,7 @@ public class InventoryChangeHandler {
 
                     }
 
-                    if(DualHotbarConfig.numHotbars == 4) {
+                    if(DualHotbarConfig.hotbarsNumber == 4) {
                         for(int i = 9; i < 27; i++) {
                             controller.windowClick(window, i, 0, ClickType.PICKUP, player);
                             controller.windowClick(window, i + 18, 0, ClickType.PICKUP, player);
@@ -158,15 +159,15 @@ public class InventoryChangeHandler {
                         continue;
                     }
 
-                    for(int i = 0; i < DualHotbarConfig.numHotbars; i++) {
+                    for(int i = 0; i < DualHotbarConfig.hotbarsNumber; i++) {
                         if(selectedItem == j + i * 9) {
-                            player.inventory.currentItem = (j + 9 * (i + 1)) % (DualHotbarConfig.numHotbars * 9);
+                            player.inventory.currentItem = (j + 9 * (i + 1)) % (DualHotbarConfig.hotbarsNumber * 9);
                         }
                     }
 
                     // If this key is the same as the last key pressed, and the time difference was less than 900ms, and double tapping is enabled
                     // then increment clickCount. Otherwise reset clickCount back to 0
-                    if (lastKey == j && DualHotbarConfig.doubleTap && time - keyTimes[j] < 900) {
+                    if (lastKey == j && DualHotbarConfig.enableDoubleTap && time - keyTimes[j] < DualHotbarConfig.doubleTapTime) {
                         clickCount++;
                     } else {
                         clickCount = 0;

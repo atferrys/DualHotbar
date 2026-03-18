@@ -1,7 +1,7 @@
 package com.rebelkeithy.dualhotbar;
 
+import com.rebelkeithy.dualhotbar.config.DualHotbarConfig;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.Map;
 
-@Mod(modid = Tags.MOD_ID, name = Tags.MOD_NAME, version = Tags.VERSION, guiFactory = "com.rebelkeithy.dualhotbar.DualHotbarGuiFactory")
+@Mod(modid = Tags.MOD_ID, name = Tags.MOD_NAME, version = Tags.VERSION)
 public class DualHotbarMod {
 
     @Instance(Tags.MOD_ID)
@@ -31,7 +31,6 @@ public class DualHotbarMod {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        DualHotbarConfig.init(event.getSuggestedConfigurationFile());
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -48,7 +47,7 @@ public class DualHotbarMod {
             hotbarSize = 9;
         } else if (DualHotbarConfig.enable) {
             System.out.println("DualHotbar installed on server. Enabling selecting slots");
-            hotbarSize = 9 * DualHotbarConfig.numHotbars;
+            hotbarSize = 9 * DualHotbarConfig.hotbarsNumber;
         }
     }
 
@@ -63,13 +62,6 @@ public class DualHotbarMod {
     public boolean checkRemote(Map<String, String> mods, Side remoteSide) {
         installedOnServer = mods.keySet().stream().anyMatch(Tags.MOD_ID::equals);
         return true;
-    }
-
-    @SubscribeEvent
-    public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if(event.getModID().equals(Tags.MOD_ID)) {
-            DualHotbarConfig.update();
-        }
     }
 
 }

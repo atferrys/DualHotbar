@@ -1,5 +1,6 @@
 package com.rebelkeithy.dualhotbar;
 
+import com.rebelkeithy.dualhotbar.config.DualHotbarConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -27,16 +28,16 @@ public class RenderHandler {
     // This is used by the asm transformer
     public static void shiftUp() {
 
-        if(!DualHotbarConfig.enable || (!DualHotbarConfig.twoLayerRendering && DualHotbarConfig.numHotbars != 4)) {
+        if(!DualHotbarConfig.enable || (!DualHotbarConfig.stackedHotbar && DualHotbarConfig.hotbarsNumber != 4)) {
             return;
         }
 
         GL11.glPushMatrix();
 
-        if(DualHotbarConfig.twoLayerRendering) {
-            GL11.glTranslatef(0, -20 * (DualHotbarConfig.numHotbars - 1), 0);
+        if(DualHotbarConfig.stackedHotbar) {
+            GL11.glTranslatef(0, -20 * (DualHotbarConfig.hotbarsNumber - 1), 0);
         } else {
-            GL11.glTranslatef(0, -20 * (DualHotbarConfig.numHotbars / 2F - 1), 0);
+            GL11.glTranslatef(0, -20 * (DualHotbarConfig.hotbarsNumber / 2F - 1), 0);
         }
 
     }
@@ -44,7 +45,7 @@ public class RenderHandler {
     // This is used by the asm transformer
     public static void shiftDown() {
 
-        if(!DualHotbarConfig.enable || (!DualHotbarConfig.twoLayerRendering && DualHotbarConfig.numHotbars != 4)) {
+        if(!DualHotbarConfig.enable || (!DualHotbarConfig.stackedHotbar && DualHotbarConfig.hotbarsNumber != 4)) {
             return;
         }
 
@@ -86,8 +87,8 @@ public class RenderHandler {
 
         GL11.glPushMatrix();
 
-        if(!DualHotbarConfig.twoLayerRendering) {
-            if(DualHotbarConfig.numHotbars == 4) {
+        if(!DualHotbarConfig.stackedHotbar) {
+            if(DualHotbarConfig.hotbarsNumber == 4) {
                 GL11.glTranslatef(0, -41, 0);
             } else {
                 GL11.glTranslatef(0, -21, 0);
@@ -112,7 +113,7 @@ public class RenderHandler {
         // Draw the hotbar slots
         InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
 
-        if(DualHotbarConfig.twoLayerRendering) {
+        if(DualHotbarConfig.stackedHotbar) {
 
             mc.ingameGUI.drawTexturedModalRect(width / 2 - 91, height - 22, 0, 0, 182, 22);
 
@@ -121,7 +122,7 @@ public class RenderHandler {
             }
 
 
-            for(int i = 1; i < DualHotbarConfig.numHotbars; i++) {
+            for(int i = 1; i < DualHotbarConfig.hotbarsNumber; i++) {
                 mc.ingameGUI.drawTexturedModalRect(width / 2 - 91, height - 22 * i - offset + (i - 1) * 2, 0, 0, 182, 21);
             }
 
@@ -139,7 +140,7 @@ public class RenderHandler {
             mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 + 91, height - 22, 1, 0, 181, 22);
             mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 + 91 - 1, height - 22, 20, 0, 3, 22);
 
-            if(DualHotbarConfig.numHotbars == 4) {
+            if(DualHotbarConfig.hotbarsNumber == 4) {
                 mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 90, height - 22 - offset, 0, 0, 182, 21);
                 mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 + 91, height - 22 - offset, 1, 0, 181, 21);
                 mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 + 91 - 1, height - 22 - offset, 20, 0, 3, 21);
@@ -157,8 +158,8 @@ public class RenderHandler {
 
         GL11.glPushMatrix();
 
-        if(!DualHotbarConfig.twoLayerRendering) {
-            if(DualHotbarConfig.numHotbars == 4) {
+        if(!DualHotbarConfig.stackedHotbar) {
+            if(DualHotbarConfig.hotbarsNumber == 4) {
                 GL11.glTranslatef(0, -41, 0);
             } else {
                 GL11.glTranslatef(0, -21, 0);
@@ -180,9 +181,9 @@ public class RenderHandler {
         GL11.glPopMatrix();
 
         // Draw the hotbar items
-        for (int i = 0; i < 9 * DualHotbarConfig.numHotbars; ++i) {
+        for (int i = 0; i < 9 * DualHotbarConfig.hotbarsNumber; ++i) {
 
-            if(DualHotbarConfig.twoLayerRendering) {
+            if(DualHotbarConfig.stackedHotbar) {
 
                 int x = width / 2 - 90 + (i % 9) * 20 + 2;
                 int z = height - 16 - 3 - ((i / 9) * offset);
@@ -205,12 +206,12 @@ public class RenderHandler {
                         animationOffset -= 2;
                     }
 
-                    if(RenderHandler.switchTicks < -6 && i / 9 == DualHotbarConfig.numHotbars - 1) {
-                        animationOffset += 20 * DualHotbarConfig.numHotbars;
+                    if(RenderHandler.switchTicks < -6 && i / 9 == DualHotbarConfig.hotbarsNumber - 1) {
+                        animationOffset += 20 * DualHotbarConfig.hotbarsNumber;
                     }
 
                     if(RenderHandler.switchTicks > 6 && i / 9 == 0) {
-                        animationOffset -= 20 * DualHotbarConfig.numHotbars;
+                        animationOffset -= 20 * DualHotbarConfig.hotbarsNumber;
                     }
 
                     GL11.glTranslatef(0, animationOffset, 0);
@@ -244,11 +245,11 @@ public class RenderHandler {
                     }
 
                     if(RenderHandler.switchTicks < -6 && (i / 9 == 2 || i / 9 == 3)) {
-                        animationOffset += 20 * DualHotbarConfig.numHotbars / 2f;
+                        animationOffset += 20 * DualHotbarConfig.hotbarsNumber / 2f;
                     }
 
                     if(RenderHandler.switchTicks > 6 && (i / 9 == 0 || i / 9 == 1)) {
-                        animationOffset -= 20 * DualHotbarConfig.numHotbars / 2f;
+                        animationOffset -= 20 * DualHotbarConfig.hotbarsNumber / 2f;
                     }
 
                     GL11.glTranslatef(0, animationOffset, 0);
@@ -281,7 +282,7 @@ public class RenderHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void shiftRendererUp(RenderGameOverlayEvent.Pre event) {
 
-        if(!DualHotbarConfig.enable || (!DualHotbarConfig.twoLayerRendering && DualHotbarConfig.numHotbars != 4)) {
+        if(!DualHotbarConfig.enable || (!DualHotbarConfig.stackedHotbar && DualHotbarConfig.hotbarsNumber != 4)) {
             return;
         }
 
@@ -295,10 +296,10 @@ public class RenderHandler {
             receivedPost = false;
             GL11.glPushMatrix();
 
-            if(DualHotbarConfig.twoLayerRendering) {
-                GL11.glTranslatef(0, -20 * (DualHotbarConfig.numHotbars - 1), 0);
+            if(DualHotbarConfig.stackedHotbar) {
+                GL11.glTranslatef(0, -20 * (DualHotbarConfig.hotbarsNumber - 1), 0);
             } else {
-                GL11.glTranslatef(0, -20 * (DualHotbarConfig.numHotbars / 2f - 1), 0);
+                GL11.glTranslatef(0, -20 * (DualHotbarConfig.hotbarsNumber / 2f - 1), 0);
             }
 
         }
@@ -307,7 +308,7 @@ public class RenderHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void shiftRendererDown(RenderGameOverlayEvent.Post event) {
 
-        if(!DualHotbarConfig.enable || (!DualHotbarConfig.twoLayerRendering && DualHotbarConfig.numHotbars != 4)) {
+        if(!DualHotbarConfig.enable || (!DualHotbarConfig.stackedHotbar && DualHotbarConfig.hotbarsNumber != 4)) {
             return;
         }
 
