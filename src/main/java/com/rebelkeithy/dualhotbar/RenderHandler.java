@@ -25,34 +25,6 @@ public class RenderHandler {
     public static int switchTicks = 0;
     private boolean receivedPost = true;
 
-    // This is used by the asm transformer
-    public static void shiftUp() {
-
-        if(!DualHotbarConfig.enable || (!DualHotbarConfig.stackedHotbar && DualHotbarConfig.hotbarsNumber != 4)) {
-            return;
-        }
-
-        GL11.glPushMatrix();
-
-        if(DualHotbarConfig.stackedHotbar) {
-            GL11.glTranslatef(0, -20 * (DualHotbarConfig.hotbarsNumber - 1), 0);
-        } else {
-            GL11.glTranslatef(0, -20 * (DualHotbarConfig.hotbarsNumber / 2F - 1), 0);
-        }
-
-    }
-
-    // This is used by the asm transformer
-    public static void shiftDown() {
-
-        if(!DualHotbarConfig.enable || (!DualHotbarConfig.stackedHotbar && DualHotbarConfig.hotbarsNumber != 4)) {
-            return;
-        }
-
-        GL11.glPopMatrix();
-
-    }
-
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void renderHotbar(RenderGameOverlayEvent.Pre event) {
 
