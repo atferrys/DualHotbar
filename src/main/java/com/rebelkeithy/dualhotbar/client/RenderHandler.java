@@ -62,7 +62,8 @@ public class RenderHandler {
         // Draw the offhand slot
         ItemStack offhandItemstack = player.getHeldItemOffhand();
         EnumHandSide handSide = player.getPrimaryHand().opposite();
-        int offhandXOffset = 91 * (DualHotbarConfig.stackedHotbar ? 1 : DualHotbarConfig.hotbarsNumber);
+
+        int offhandXOffset = 91 * xCount();
 
         if(!offhandItemstack.isEmpty()) {
             if(handSide == EnumHandSide.LEFT) {
@@ -73,7 +74,7 @@ public class RenderHandler {
         }
 
         // Draw the hotbar slots
-        InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
+        InventoryPlayer inv = mc.player.inventory;
 
         if(DualHotbarConfig.stackedHotbar) {
 
@@ -99,6 +100,7 @@ public class RenderHandler {
                 mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 + 91 - 1, height - 22 - offset, 20, 0, 3, 21);
             }
 
+            // Draw selection square
             mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 1 + (inv.currentItem % 18) * 20 - 90, height - 22 - 1 - ((inv.currentItem / 18) * offset), 0, 22, 24, 22);
             mc.ingameGUI.drawTexturedModalRect(width / 2 - 91 - 1 + (inv.currentItem % 18) * 20 - 90, height - 1 - ((inv.currentItem / 18) * offset), 0, 22, 24, 1);
 
@@ -121,75 +123,43 @@ public class RenderHandler {
         // Draw the hotbar items
         for (int i = 0; i < 9 * DualHotbarConfig.hotbarsNumber; ++i) {
 
-            if(DualHotbarConfig.stackedHotbar) {
+            int x = DualHotbarConfig.stackedHotbar
+                    ? width / 2 - 90 + (i % 9) * 20 + 2
+                    : width / 2 - 90 + (i % 18) * 20 + 2 - 90;
+            int y = DualHotbarConfig.stackedHotbar
+                    ? height - 16 - 3 - ((i / 9) * offset)
+                    : height - 16 - 3 - ((i / 18) * offset);
 
-                int x = width / 2 - 90 + (i % 9) * 20 + 2;
-                int z = height - 16 - 3 - ((i / 9) * offset);
+            GL11.glPushMatrix();
 
-                GL11.glPushMatrix();
+            // Render hotbar switch animation
+            if(RenderHandler.switchTicks != 0) {
 
-                if(RenderHandler.switchTicks != 0) {
+                float animationOffset = RenderHandler.switchTicks * 2;
 
-                    float animationOffset = RenderHandler.switchTicks * 2;
-
-                    if(RenderHandler.switchTicks < 0) {
-                        animationOffset += 2;
-                    }
-
-                    if(RenderHandler.switchTicks > 0)  {
-                        animationOffset -= 2;
-                    }
-
-                    if(RenderHandler.switchTicks < -6 && i / 9 == DualHotbarConfig.hotbarsNumber - 1) {
-                        animationOffset += 20 * DualHotbarConfig.hotbarsNumber;
-                    }
-
-                    if(RenderHandler.switchTicks > 6 && i / 9 == 0) {
-                        animationOffset -= 20 * DualHotbarConfig.hotbarsNumber;
-                    }
-
-                    GL11.glTranslatef(0, animationOffset, 0);
-
+                if(RenderHandler.switchTicks < 0) {
+                    animationOffset += 2;
                 }
 
-                renderHotbarItem(x, z, partialTicks, player, player.inventory.getStackInSlot(i));
-                GL11.glPopMatrix();
-
-            } else {
-
-                int x = width / 2 - 90 + (i % 18) * 20 + 2 - 90;
-                int z = height - 16 - 3 - ((i / 18) * offset);
-
-                GL11.glPushMatrix();
-
-                if(RenderHandler.switchTicks != 0) {
-
-                    float animationOffset = RenderHandler.switchTicks * 2;
-
-                    if(RenderHandler.switchTicks < 0) {
-                        animationOffset += 2;
-                    }
-
-                    if(RenderHandler.switchTicks > 0) {
-                        animationOffset -= 2;
-                    }
-
-                    if(RenderHandler.switchTicks < -6 && (i / 9 == 2 || i / 9 == 3)) {
-                        animationOffset += 20 * DualHotbarConfig.hotbarsNumber / 2f;
-                    }
-
-                    if(RenderHandler.switchTicks > 6 && (i / 9 == 0 || i / 9 == 1)) {
-                        animationOffset -= 20 * DualHotbarConfig.hotbarsNumber / 2f;
-                    }
-
-                    GL11.glTranslatef(0, animationOffset, 0);
-
+                if(RenderHandler.switchTicks > 0) {
+                    animationOffset -= 2;
                 }
 
-                renderHotbarItem(x, z, partialTicks, player, player.inventory.getStackInSlot(i));
-                GL11.glPopMatrix();
+                if(RenderHandler.switchTicks < -6 && i / 9 == (yCount() - 1)) {
+                    animationOffset += 20 * yCount();
+                }
+
+                if(RenderHandler.switchTicks > 6 && i / 9 == 0) {
+                    animationOffset -= 20 * yCount();
+                }
+
+                GL11.glTranslatef(0, animationOffset, 0);
 
             }
+
+            renderHotbarItem(x, y, partialTicks, player, player.inventory.getStackInSlot(i));
+            GL11.glPopMatrix();
+
         }
 
         RenderHelper.disableStandardItemLighting();
@@ -209,14 +179,25 @@ public class RenderHandler {
 
     }
 
+    private static boolean shouldShift(ElementType type) {
+        return type == ElementType.CHAT
+                || type == ElementType.ARMOR
+                || type == ElementType.EXPERIENCE
+                || type == ElementType.FOOD
+                || type == ElementType.HEALTH
+                || type == ElementType.HEALTHMOUNT
+                || type == ElementType.JUMPBAR
+                || type == ElementType.AIR;
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void shiftRendererUp(RenderGameOverlayEvent.Pre event) {
 
-        if(!DualHotbarConfig.enabled || (!DualHotbarConfig.stackedHotbar && DualHotbarConfig.hotbarsNumber != 4)) {
+        if(!DualHotbarConfig.enabled) {
             return;
         }
 
-        if(event.getType() == ElementType.CHAT || event.getType() == ElementType.ARMOR || event.getType() == ElementType.EXPERIENCE || event.getType() == ElementType.FOOD || event.getType() == ElementType.HEALTH || event.getType() == ElementType.HEALTHMOUNT || event.getType() == ElementType.JUMPBAR || event.getType() == ElementType.AIR/* || event.type == ElementType.TEXT*/) {
+        if(shouldShift(event.getType())) {
 
             // In some cases the post render event is not received (when the pre event is cancelled by another mod), in the case, go ahead and pop the matrix before continuing
             if(!receivedPost) {
@@ -226,23 +207,20 @@ public class RenderHandler {
             receivedPost = false;
             GL11.glPushMatrix();
 
-            if(DualHotbarConfig.stackedHotbar) {
-                GL11.glTranslatef(0, -20 * (DualHotbarConfig.hotbarsNumber - 1), 0);
-            } else {
-                GL11.glTranslatef(0, -20 * (DualHotbarConfig.hotbarsNumber / 2f - 1), 0);
-            }
+            GL11.glTranslatef(0, -20 * (yCount() - 1), 0);
 
         }
+
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void shiftRendererDown(RenderGameOverlayEvent.Post event) {
 
-        if(!DualHotbarConfig.enabled || (!DualHotbarConfig.stackedHotbar && DualHotbarConfig.hotbarsNumber != 4)) {
+        if(!DualHotbarConfig.enabled) {
             return;
         }
 
-        if(event.getType() == ElementType.CHAT || event.getType() == ElementType.ARMOR || event.getType() == ElementType.EXPERIENCE || event.getType() == ElementType.FOOD || event.getType() == ElementType.HEALTH || event.getType() == ElementType.HEALTHMOUNT || event.getType() == ElementType.JUMPBAR || event.getType() == ElementType.AIR/* || event.type == ElementType.TEXT*/) {
+        if(shouldShift(event.getType())) {
             receivedPost = true;
             GL11.glPopMatrix();
         }
@@ -281,6 +259,26 @@ public class RenderHandler {
             itemRenderer.renderItemOverlays(mc.fontRenderer, stack, x, y);
 
         }
+
+    }
+
+    public static int xCount() {
+
+        if(DualHotbarConfig.stackedHotbar) {
+            return 1;
+        }
+
+        return Math.min(DualHotbarConfig.hotbarsNumber, 2);
+
+    }
+
+    public static int yCount() {
+
+        if(DualHotbarConfig.stackedHotbar) {
+            return DualHotbarConfig.hotbarsNumber;
+        }
+
+        return DualHotbarConfig.hotbarsNumber / 2;
 
     }
 

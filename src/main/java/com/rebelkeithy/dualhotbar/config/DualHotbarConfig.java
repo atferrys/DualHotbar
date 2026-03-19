@@ -36,7 +36,7 @@ public class DualHotbarConfig {
 
     private static void validate() {
 
-        if(hotbarsNumber > 2) {
+        if(hotbarsNumber % 2 != 0) {
             stackedHotbar = true;
         }
 
