@@ -11,6 +11,7 @@
 	"server": [],
 	"client": [
 		"ForgeHooksMixin",
-		"GuiIngameForgeMixin"
+		"GuiIngameForgeMixin",
+		"GuiNewChatMixin"
 	]
 }
