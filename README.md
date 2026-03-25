@@ -13,7 +13,7 @@ This is a fork of RebelKeithy's [DualHotbar](https://github.com/RebelKeithy/Dual
 <br clear="left"/>
 
 ## About DualHotbar
-This mod allows you to use multiple rows of your inventory as hotbars as the same time.
+This mod allows you to use multiple rows of your inventory as hotbars at the same time.
 It can be configured in different ways to render them stacked and/or next to each other.
 
 The slots are taken from the top row of your inventory going downwards.
