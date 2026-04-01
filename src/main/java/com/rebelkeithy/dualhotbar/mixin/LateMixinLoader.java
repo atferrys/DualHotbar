@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class LateMixinLoader implements ILateMixinLoader {
-    
-    private static final List<String> COMPAT_MIXINS = Arrays.asList(
 
+    private static final List<String> COMPAT_MIXINS = Arrays.asList(
+            "lemonskin"
     );
-    
+
     @Override
     public List<String> getMixinConfigs() {
         return COMPAT_MIXINS.stream()
@@ -35,5 +35,5 @@ public class LateMixinLoader implements ILateMixinLoader {
         return Loader.isModLoaded(configPath[3]);
 
     }
-    
+
 }

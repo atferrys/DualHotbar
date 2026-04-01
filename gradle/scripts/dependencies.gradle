@@ -65,4 +65,6 @@ dependencies {
     // implementation ('com.google.code.gson:gson:2.8.6') {
     //     transitive = false
     // }
+
+    compileOnly rfg.deobf("curse.maven:lemonskin-1337144:7763338")
 }
