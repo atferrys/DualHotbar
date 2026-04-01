@@ -38,6 +38,10 @@ You can also use the mouse wheel and a configurable modifier key (ctrl by defaul
 ## New features & Enhancements
 * Added support for config synchronization when joining multiplayer servers
 * Enabled in-place config updates without rejoining world or restarting the game
+* Added compatibility with [LemonSkin](https://www.curseforge.com/minecraft/mc-mods/lemonskin)
+  * Saturation, food, and health overlays are now rendered at the correct height
+* Added compatibility with [SimpleDifficulty](https://www.curseforge.com/minecraft/mc-mods/simpledifficulty)
+  * Temperature HUD is now rendered at the correct height
 
 ## Technical changes
 * Replaced ASM with Mixins for better compatibility and maintainability
