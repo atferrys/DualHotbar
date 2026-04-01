@@ -1,5 +1,5 @@
 {
-	"package": "com.rebelkeithy.dualhotbar.mixin",
+	"package": "com.rebelkeithy.dualhotbar.mixin.early",
 	"required": true,
 	"refmap": "${mixin_refmap}",
 	"target": "@env(DEFAULT)",

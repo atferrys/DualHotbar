@@ -1,4 +1,4 @@
-package com.rebelkeithy.dualhotbar.mixin;
+package com.rebelkeithy.dualhotbar.mixin.early;
 
 import com.rebelkeithy.dualhotbar.config.DualHotbarConfig;
 import net.minecraft.client.multiplayer.PlayerControllerMP;

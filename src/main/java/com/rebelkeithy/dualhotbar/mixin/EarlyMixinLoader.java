@@ -11,7 +11,7 @@ import java.util.Map;
 
 @IFMLLoadingPlugin.Name(Tags.MOD_NAME)
 @IFMLLoadingPlugin.MCVersion("1.12.2")
-public class MixinLoader implements IFMLLoadingPlugin, IEarlyMixinLoader {
+public class EarlyMixinLoader implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
     @Override
     public List<String> getMixinConfigs() {
