@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 public class LateMixinLoader implements ILateMixinLoader {
 
     private static final List<String> COMPAT_MIXINS = Arrays.asList(
-            "lemonskin"
+            "lemonskin",
+            "simpledifficulty"
     );
 
     @Override
